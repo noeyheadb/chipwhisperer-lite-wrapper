@@ -1,4 +1,4 @@
-# chipwhisperer-lite-wrapper
+# chipwhisperer-lite-wrapper <img src="https://img.shields.io/badge/Code%20line-0.4k-f39fff"></img>
 `chipwhisperer-lite-wrapper` is a simple [chipwhisperer](https://github.com/newaetech/chipwhisperer) wrapper, 
 which makes it more easy to measure the power traces for power analysis attacks.
 It is for only `ChipWhisperer®-Lite`, not suitable for other upper and lower models. (modification required for other models)
