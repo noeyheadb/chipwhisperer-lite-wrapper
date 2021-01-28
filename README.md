@@ -41,7 +41,8 @@ cw.status(verbose=True)
 cw.capture_single_trace(visualization=True)
 
 # Export trace, textin, textout, key numpy array -> ./cw-export/identifier-DATE-trace.npy, ...
-cw.capture_multiple_traces(500, "identifier", poi=(1300, 2600))
+# data = {"trace": traces, "key": keys, "textin": textins, "textout": textouts}
+data = cw.capture_multiple_traces(500, "identifier", poi=(1300, 2600))
 
 # Disconnect cw-lite device
 cw.disconnect()
