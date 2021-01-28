@@ -59,7 +59,9 @@ class CWLiteWrapper:
             print(f"Default mode is 'fixed key and random textin'. Please Change mode appropriately.")
         pass
 
-    def _check_connection(self, raise_exception: bool) -> bool:
+    def _check_connection(self,
+                          raise_exception: bool
+                          ) -> bool:
         if self._scope is None:
             if raise_exception:
                 raise RuntimeError("Scope object is None. Please connect the cw-lite using 'connect()'.")
@@ -72,7 +74,9 @@ class CWLiteWrapper:
                 return False
         return True
 
-    def status(self, verbose: bool = True) -> Dict:
+    def status(self,
+               verbose: bool = True
+               ) -> Dict:
         self._check_connection(raise_exception=True)
         result = {
             "connected": self._scope.getStatus(),
@@ -164,14 +168,14 @@ class CWLiteWrapper:
             traces[i] = trace.wave[poi[0]:poi[1]]
             textouts.append(trace.textout.hex().upper())
 
-            if not self._ktp.fixed_text:  # random textin
+            if not self._ktp.getPlainType():  # random textin
                 textins.append(trace.textin.hex().upper())
-            elif i == 0:                  # fixed  textin
+            elif i == 0:                      # fixed  textin
                 textins.append(trace.textin.hex().upper())
 
-            if not self._ktp.fixed_key:  # random key
+            if not self._ktp.get_key_type():  # random key
                 keys.append(trace.key.hex().upper())
-            elif i == 0:                 # fixed  key
+            elif i == 0:                      # fixed  key
                 keys.append(trace.key.hex().upper())
 
             if verbose:
@@ -233,18 +237,18 @@ class CWLiteWrapper:
         if len(hex_str) != bit/4:
             raise RuntimeError("The length of the key is not correct.")
         self._ktp.set_key_type(True)
-        if self._ktp.getKeyType:
+        if self._ktp.get_key_type():
             self._ktp.setInitialKey(hex_str)
         else:
             raise RuntimeError("Unexpected exception has occurred.")
         pass
 
-    def set_random_key(self):
+    def set_random_key(self) -> None:
         self._check_connection(raise_exception=True)
         self._ktp.set_key_type(False)
         pass
 
-    def get_key_type_and_value(self):
+    def get_key_type_and_value(self) -> dict:
         return {"is_fixed": self._ktp.get_key_type(),
                 "value": self._ktp.getInitialKey() if self._ktp.get_key_type() is True else None}
 
@@ -257,34 +261,40 @@ class CWLiteWrapper:
         if len(hex_str) != bit/4:
             raise RuntimeError("The length of the textin is not correct.")
         self._ktp.setPlainType(True)
-        if self._ktp.getKeyType:
+        if self._ktp.getPlainType():
             self._ktp.setInitialText(hex_str)
         else:
             raise RuntimeError("Unexpected exception has occurred.")
         pass
 
-    def set_random_textin(self):
+    def set_random_textin(self) -> None:
         self._check_connection(raise_exception=True)
         self._ktp.setPlainType(False)
         pass
 
-    def get_textin_type_and_value(self):
+    def get_textin_type_and_value(self) -> dict:
         return {"is_fixed": self._ktp.getPlainType(),
                 "value": self._ktp.getInitialText() if self._ktp.getPlainType() is True else None}
 
-    def set_trig_cnt_manually(self, trig_cnt: int) -> None:
+    def set_trig_cnt_manually(self,
+                              trig_cnt: int
+                              ) -> None:
         self._trig_cnt = trig_cnt
         pass
 
     def get_saved_trig_cnt(self):
         return self._trig_cnt
 
-    def xmega_programmer(self, dot_hex_path: str) -> None:
+    def xmega_programmer(self,
+                         dot_hex_path: str
+                         ) -> None:
         self._check_connection(raise_exception=True)
         cw.program_target(self._scope, cw.programmers.XMEGAProgrammer, dot_hex_path)
         pass
 
-    def change_export_path(self, export_directory_path: str) -> None:
+    def change_export_path(self,
+                           export_directory_path: str
+                           ) -> None:
         if export_directory_path is None:
             raise RuntimeError("Export_path is invalid.")
         self._export_path = check_and_reformat_dir(export_directory_path)
