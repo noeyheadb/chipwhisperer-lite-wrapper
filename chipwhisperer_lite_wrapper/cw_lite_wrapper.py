@@ -141,7 +141,6 @@ class CWLiteWrapper:
     def capture_multiple_traces(self,
                                 quantity: int,
                                 identifier: str,
-                                additional_export_item: Iterable = ("key", "textin", "textout"),
                                 poi: Optional[Tuple[int, int]] = None,
                                 verbose: bool = True
                                 ) -> dict:
@@ -156,61 +155,39 @@ class CWLiteWrapper:
             poi = (0, self._scope.adc.samples)
             traces = np.empty((quantity, self._scope.adc.samples))
 
-        if 'textin' in additional_export_item:
-            textins = []
-        else:
-            textins = None
-
-        if 'textout' in additional_export_item:
-            textouts = []
-        else:
-            textouts = None
-
-        if 'key' in additional_export_item:
-            keys = []
-        else:
-            keys = None
+        textins = []
+        textouts = []
+        keys = []
 
         for i in range(quantity):
             trace = self._capture()
-
             traces[i] = trace.wave[poi[0]:poi[1]]
+            textouts.append(trace.textout.hex().upper())
 
-            if textouts is not None:
-                textouts.append(trace.textout.hex().upper())
+            if not self._ktp.fixed_text:  # random textin
+                textins.append(trace.textin.hex().upper())
+            elif i == 0:                  # fixed  textin
+                textins.append(trace.textin.hex().upper())
 
-            if textins is not None:
-                if not self._ktp.fixed_text:  # random textin
-                    textins.append(trace.textin.hex().upper())
-                elif i == 0:                  # fixed  textin
-                    textins.append(trace.textin.hex().upper())
-
-            if keys is not None:
-                if not self._ktp.fixed_key:  # random key
-                    keys.append(trace.key.hex().upper())
-                elif i == 0:                 # fixed  key
-                    keys.append(trace.key.hex().upper())
+            if not self._ktp.fixed_key:  # random key
+                keys.append(trace.key.hex().upper())
+            elif i == 0:                 # fixed  key
+                keys.append(trace.key.hex().upper())
 
             if verbose:
                 print(f'\r{" " * 60}', end='', flush=True)
                 print(f'\rMeasuring... {((i + 1) / quantity) * 100:.2f}% ({i + 1}/{quantity})', end='', flush=True)
 
-        return_item = {"trace": traces}
-        np.save(f"{self._export_path}{identifier}-{capture_time}-trace.npy", traces)
+        keys = np.array(keys)
+        textins = np.array(textins)
+        textouts = np.array(textouts)
 
-        if keys is not None:
-            keys = np.array(keys)
-            return_item["key"] = keys
-            np.save(f"{self._export_path}{identifier}-{capture_time}-key.npy", keys)
-        if textins is not None:
-            textins = np.array(textins)
-            return_item["textin"] = textins
-            np.save(f"{self._export_path}{identifier}-{capture_time}-textin.npy", textins)
-        if textouts is not None:
-            textouts = np.array(textouts)
-            return_item["textout"] = textouts
-            np.save(f"{self._export_path}{identifier}-{capture_time}-textout.npy", textouts)
-        return return_item
+        np.save(f"{self._export_path}{identifier}-{capture_time}-trace.npy", traces)
+        np.save(f"{self._export_path}{identifier}-{capture_time}-key.npy", keys)
+        np.save(f"{self._export_path}{identifier}-{capture_time}-textin.npy", textins)
+        np.save(f"{self._export_path}{identifier}-{capture_time}-textout.npy", textouts)
+
+        return {"trace": traces, "key": keys, "textin": textins, "textout": textouts}
 
     def set_scope_detail(self,
                          samples: Optional[int] = None,
