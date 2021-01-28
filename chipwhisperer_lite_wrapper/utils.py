@@ -9,7 +9,7 @@ seaborn.set()
 
 def cw_lite_firmware_update_automatically():
     scope = cw.scope()
-    target = cw.target(scope)
+    _ = cw.target(scope)
     programmer = cw.SAMFWLoader(scope=scope)
     programmer.auto_program()
     pass

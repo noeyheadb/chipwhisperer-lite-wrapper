@@ -3,7 +3,7 @@ import chipwhisperer as cw
 import numpy as np
 from chipwhisperer.capture import scopes
 from chipwhisperer.capture.acq_patterns.basic import AcqKeyTextPattern_Basic
-from typing import Optional, Tuple, Dict, Iterable
+from typing import Optional, Tuple, Dict
 from datetime import datetime
 from .cw_trace import CWTrace
 from .utils import visualization_single_trace, check_and_reformat_dir
