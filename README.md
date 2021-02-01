@@ -1,9 +1,9 @@
 # chipwhisperer-lite-wrapper <img src="https://img.shields.io/badge/Code%20line-0.4k-f39fff"></img>
 `chipwhisperer-lite-wrapper` is a simple [chipwhisperer](https://github.com/newaetech/chipwhisperer) wrapper, 
 which makes it more easy to measure the power traces.
-It is only for `ChipWhisperer®-Lite`, not suitable for other upper and lower models.
+It is only for [`ChipWhisperer®-Lite`](https://rtfm.newae.com/Capture/ChipWhisperer-Lite/), not suitable for other upper and lower models.
 (modification required for other models) 
-In addition, it only provides the **power trace measurement function**.
+In addition, it only provides the **power trace measurement functions**.
 
 ## Requirement
 * [chipwhisperer](https://github.com/newaetech/chipwhisperer) (commits up to Jan. 2021)
@@ -26,6 +26,9 @@ cw.xmega_programmer("./output-CW303.hex")
 
 # Setting scope and target detail
 cw.set_scope_detail(samples=5000, trigger_mode="rising_edge", offset=300, scale="clkgen_x4")
+
+# Changing key length  (Default: 128-bit)
+# cw.set_key_length(128)
 
 # Setting fixed key
 cw.set_fixed_key("FC2A977334D94A8022883DED4D89846E")

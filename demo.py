@@ -12,6 +12,9 @@ cw.xmega_programmer("./output-CW303.hex")
 # Setting scope and target detail
 cw.set_scope_detail(samples=5000, trigger_mode="rising_edge", offset=300, scale="clkgen_x4")
 
+# Changing key length  (Default: 128-bit)
+# cw.set_key_length(128)
+
 # Setting fixed key
 cw.set_fixed_key("FC2A977334D94A8022883DED4D89846E")
 
