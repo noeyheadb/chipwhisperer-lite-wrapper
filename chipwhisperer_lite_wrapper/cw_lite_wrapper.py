@@ -56,7 +56,8 @@ class CWLiteWrapper:
         self._ktp.setInitialKey("00112233445566778899AABBCCDDEEFF")  # initial key (128bit, 16byte)
         if verbose:
             print(f"{self._scope.get_name()} Connected!")
-            print(f"Default mode is 'fixed key and random textin'. Please Change mode appropriately.")
+            print(f"Default mode is '128-bit fixed key and 128-bit random textin'. "
+                  f"Please Change key & textin mode appropriately.")
         pass
 
     def _check_connection(self,
@@ -89,8 +90,10 @@ class CWLiteWrapper:
             "saved_trig_cnt": f"{self._trig_cnt}" if self._trig_cnt is not None else "unknown",
             "last_trig_cnt": f"{self._scope.adc.trig_count}"
             if self._scope.adc.basic_mode == "rising_edge" else "unknown",
+            "key_length": self._ktp.keyLen(),
             "fixed_key": self._ktp.get_key_type(),
             "fixed_key_value": None if not self._ktp.get_key_type() else self._ktp.getInitialKey().replace(" ", ''),
+            "textin_length": self._ktp.textLen(),
             "fixed_textin": self._ktp.getPlainType(),
             "fixed_textin_value": None if not self._ktp.getPlainType() else self._ktp.getInitialText().replace(" ", '')
         }
@@ -105,8 +108,10 @@ class CWLiteWrapper:
                   f"Scale        : {result.get('scale')}\n",
                   f"SavedTrigCnt : {result.get('saved_trig_cnt')}\n",
                   f"LastTrigCnt  : {result.get('last_trig_cnt')}\n",
+                  f"Key length   : {result.get('key_length')}\n",
                   f"Fixed Key    : {result.get('fixed_key')}",
                   "\n" if not result.get("fixed_key") else f" : {result.get('fixed_key_value')}\n",
+                  f"Textin_length: {result.get('textin_length')}\n",
                   f"Fixed text   : {result.get('fixed_textin')}",
                   f"\n" if not result.get("fixed_textin") else f" : {result.get('fixed_textin_value')}\n",
                   f"----------------------------------------------------------------------\n",
@@ -229,12 +234,11 @@ class CWLiteWrapper:
         pass
 
     def set_fixed_key(self,
-                      hex_str: str,
-                      bit: int = 128
+                      hex_str: str
                       ) -> None:
         self._check_connection(raise_exception=True)
         hex_str = hex_str.strip().replace(" ", "")
-        if len(hex_str) != bit/4:
+        if len(hex_str) / 2 != self._ktp.keyLen():
             raise RuntimeError("The length of the key is not correct.")
         self._ktp.set_key_type(True)
         if self._ktp.get_key_type():
@@ -252,13 +256,21 @@ class CWLiteWrapper:
         return {"is_fixed": self._ktp.get_key_type(),
                 "value": self._ktp.getInitialKey() if self._ktp.get_key_type() is True else None}
 
+    def set_key_length(self,
+                       bit: int = 128
+                       ) -> None:
+        if bit % 8 != 0:
+            raise RuntimeError("Key length must be in 8-bit units.")
+        if self._ktp.keyLen() != bit / 8:
+            self._ktp.key_len = bit / 8
+        pass
+
     def set_fixed_textin(self,
-                         hex_str: str,
-                         bit: int = 128
+                         hex_str: str
                          ) -> None:
         self._check_connection(raise_exception=True)
         hex_str = hex_str.strip().replace(" ", "")
-        if len(hex_str) != bit/4:
+        if len(hex_str) / 2 != self._ktp.textLen():
             raise RuntimeError("The length of the textin is not correct.")
         self._ktp.setPlainType(True)
         if self._ktp.getPlainType():
@@ -275,6 +287,15 @@ class CWLiteWrapper:
     def get_textin_type_and_value(self) -> dict:
         return {"is_fixed": self._ktp.getPlainType(),
                 "value": self._ktp.getInitialText() if self._ktp.getPlainType() is True else None}
+
+    def set_textin_length(self,
+                          bit: int = 128
+                          ) -> None:
+        if bit % 8 != 0:
+            raise RuntimeError("Textin length must be in 8-bit units.")
+        if self._ktp.textLen() != bit / 8:
+            self._ktp.text_len = bit / 8
+        pass
 
     def set_trig_cnt_manually(self,
                               trig_cnt: int
