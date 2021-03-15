@@ -5,7 +5,7 @@ It is only for [`ChipWhisperer®-Lite`](https://rtfm.newae.com/Capture/ChipWhisp
 (modification required for other models) 
 In addition, it only provides the **power trace measurement functions**.
 
-## Requirement
+## Requirements
 * [chipwhisperer](https://github.com/newaetech/chipwhisperer) (commits up to Jan. 2021)
 * numpy
 * matplotlib
