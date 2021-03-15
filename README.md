@@ -6,7 +6,8 @@ It is only for [`ChipWhisperer®-Lite`](https://rtfm.newae.com/Capture/ChipWhisp
 In addition, it only provides the **power trace measurement functions**.
 
 ## Requirements
-* [chipwhisperer](https://github.com/newaetech/chipwhisperer) (commits up to Jan. 2021)
+* [chipwhisperer](https://github.com/newaetech/chipwhisperer)
+  * \+[(Requirements of chipwhisperer)](https://github.com/newaetech/chipwhisperer/blob/develop/software/requirements.txt)
 * numpy
 * matplotlib
 * seaborn
