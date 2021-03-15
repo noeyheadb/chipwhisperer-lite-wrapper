@@ -1,4 +1,5 @@
 import sys
+import os
 import chipwhisperer as cw
 import numpy as np
 from chipwhisperer.capture import scopes
@@ -310,6 +311,8 @@ class CWLiteWrapper:
                          dot_hex_path: str
                          ) -> None:
         self._check_connection(raise_exception=True)
+        if not os.path.exists(dot_hex_path):
+            raise RuntimeError("The .hex file does not exist.")
         cw.program_target(self._scope, cw.programmers.XMEGAProgrammer, dot_hex_path)
         pass
 
